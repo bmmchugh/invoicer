@@ -1,0 +1,6 @@
+require 'hours/settings'
+require 'hours/less_api'
+require 'hours/client'
+require 'hours/invoice'
+require 'hours/line_item'
+require 'hours/line_item_reader'
