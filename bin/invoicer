@@ -1,0 +1,44 @@
+#!ruby -w
+
+ROOT_PATH = File.join(File.dirname(__FILE__), '..')
+$LOAD_PATH << File.join(ROOT_PATH, 'lib')
+
+require 'thor'
+require 'hours'
+
+class Invoicer < Thor
+
+  desc 'create_invoice CONTACT_ID, SPREADSHEET', 'Creates a new invoice for CONTACT_ID and adds line items from SPREADSHEET.'
+  def create_invoice(contact_id, spreadsheet)
+    puts "#{contact_id}, #{spreadsheet}"
+    invoice = new_invoice(contact_id)
+    create_line_items(invoice.id, spreadsheet)
+    puts "Finished creating Invoice #{invoice.id} -- #{invoice.reference_name_number}"
+  end
+
+  desc 'client', 'Prints client information.'
+  def client()
+    puts Client.load(593517).inspect
+  end
+
+  desc 'new_invoice CONTACT_ID', 'Create a new invoice for CONTACT_ID'
+  def new_invoice(contact_id)
+    invoice = Invoice.new
+    invoice.contact_id = contact_id
+    invoice.save()
+    puts "Created invoice #{invoice.id} -- #{invoice.reference_name_number}"
+    invoice
+  end
+
+  desc "create_line_items INVOICE_ID, SPREADSHEET", "Create line items on INVOICE_ID from SPREADSHEET"
+  def create_line_items(invoice_id, spreadsheet)
+    LineItemReader.read(spreadsheet) do |line_item|
+      line_item.proposal_id = invoice_id
+      line_item.save()
+      puts "Added line item #{line_item.id} -- #{line_item.line}, #{line_item.quantity}, #{line_item.unit_price}, #{line_item.additional_description}"
+    end
+  end
+
+end
+
+Invoicer.start(ARGV)
