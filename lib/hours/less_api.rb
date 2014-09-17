@@ -36,7 +36,7 @@ class LessApi
 
   def save(path_args = {})
 
-    puts "Saving with #{path_args.inspect}"
+    #puts "Saving with #{path_args.inspect}"
 
     if self.respond_to?(:id) && self.id.nil?
       response_hash = JSON.parse(self.class.post([self.class.api_path(path_args)], {}, self.api_hash))
@@ -80,7 +80,7 @@ class LessApi
   def self.get(path, params={})
     uri = buildUri(path, params)
 
-    puts "GET #{uri.to_s}"
+    #puts "GET #{uri.to_s}"
     request = Net::HTTP::Get.new(uri)
 
     send_request(request, uri)
@@ -89,7 +89,7 @@ class LessApi
   def self.post(path, params={}, form_data={})
     uri = buildUri(path, params)
 
-    puts "POST #{uri.to_s}"
+    #puts "POST #{uri.to_s}"
     request = Net::HTTP::Post.new(uri)
     unless form_data.empty?
       request.set_form_data(form_data)
@@ -109,7 +109,7 @@ class LessApi
 
   def self.buildUri(path, params={})
     uri = URI(Settings.base_uri)
-    puts uri.to_s
+    #puts uri.to_s
     uri_path = ''
     unless path.nil?
       uri_path << [path].flatten.join('/')
