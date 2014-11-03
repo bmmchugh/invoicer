@@ -9,10 +9,12 @@ require 'bar-of-progress'
 
 class Invoicer < Thor
 
-  desc 'create_invoice CONTACT_ID, SPREADSHEET', 'Creates a new invoice for CONTACT_ID and adds line items from SPREADSHEET.'
-  def create_invoice(contact_id, spreadsheet)
+  desc 'create_invoice SPREADSHEET', 'Creates a new invoice for CONTACT_ID and adds line items from SPREADSHEET.'
+  def create_invoice(spreadsheet)
     #puts "#{contact_id}, #{spreadsheet}"
-    invoice = new_invoice(contact_id)
+    template_id = LineItemReader.get_template_id(spreadsheet)
+    contact_id = LineItemReader.get_contact_id(spreadsheet)
+    invoice = new_invoice(contact_id, template_id)
     create_line_items(invoice.id, spreadsheet)
     puts "Finished creating Invoice #{invoice.id} -- #{invoice.reference_name_number}"
   end
@@ -22,10 +24,15 @@ class Invoicer < Thor
     puts Client.load(593517).inspect
   end
 
-  desc 'new_invoice CONTACT_ID', 'Create a new invoice for CONTACT_ID'
-  def new_invoice(contact_id)
+  desc 'new_invoice CONTACT_ID, TEMPLATE_ID', 'Create a new invoice for CONTACT_ID with TEMPLATE_ID'
+  def new_invoice(contact_id, template_id = nil)
     invoice = Invoice.new
-    invoice.contact_id = contact_id
+    unless contact_id.empty?
+      invoice.contact_id = contact_id
+    end
+    unless template_id.empty?
+      invoice.proposal_template_id = template_id
+    end
     invoice.save()
     puts "Created invoice #{invoice.id} -- #{invoice.reference_name_number}"
     invoice

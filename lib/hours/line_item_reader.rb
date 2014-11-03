@@ -29,4 +29,32 @@ class LineItemReader
 
   end
 
+  def self.get_contact_id(file_name)
+
+    contact_id = nil
+    CSV.foreach(file_name) do |row|
+      if row[0] == 'Client'
+        contact_id = row[2]
+        break
+      end
+    end
+
+    contact_id
+
+  end
+
+  def self.get_template_id(file_name)
+
+    template_id = nil
+    CSV.foreach(file_name) do |row|
+      if row[0] == 'Invoice ID'
+        template_id = row[2]
+        break
+      end
+    end
+
+    template_id
+
+  end
+
 end
