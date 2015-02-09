@@ -9,6 +9,13 @@ require 'bar-of-progress'
 
 class Invoicer < Thor
 
+  desc 'mileage SPREADSHEET', 'Create mileage entries.'
+  def mileage(spreadsheet)
+    MileageReader.read(spreadsheet) do |mileage_log|
+      mileage_log.save()
+    end
+  end
+
   desc 'create_invoice SPREADSHEET', 'Creates a new invoice for CONTACT_ID and adds line items from SPREADSHEET.'
   def create_invoice(spreadsheet)
     #puts "#{contact_id}, #{spreadsheet}"
